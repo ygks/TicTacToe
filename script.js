@@ -1,20 +1,64 @@
 let Game = {
-  board: ["X", "", "", "", "O", "", "", "", ""],
+  board: ["", "", "", "", "", "", "", "", ""],
+  symbol: "X",
+  lastSymbol: "",
   turn: true,
 };
 
 let boardDom = document.querySelector(".boardSection");
 
-render();
+start();
 
-function render() {
+function winningCondition() {
+  if (
+    (Game.board[0] === Game.lastSymbol &&
+      Game.board[1] === Game.lastSymbol &&
+      Game.board[2] === Game.lastSymbol) ||
+    (Game.board[3] === Game.lastSymbol &&
+      Game.board[4] === Game.lastSymbol &&
+      Game.board[5] === Game.lastSymbol) ||
+    (Game.board[6] === Game.lastSymbol &&
+      Game.board[7] === Game.lastSymbol &&
+      Game.board[8] === Game.lastSymbol) ||
+    (Game.board[0] === Game.lastSymbol &&
+      Game.board[3] === Game.lastSymbol &&
+      Game.board[6] === Game.lastSymbol) ||
+    (Game.board[1] === Game.lastSymbol &&
+      Game.board[4] === Game.lastSymbol &&
+      Game.board[7] === Game.lastSymbol) ||
+    (Game.board[2] === Game.lastSymbol &&
+      Game.board[5] === Game.lastSymbol &&
+      Game.board[8] === Game.lastSymbol) ||
+    (Game.board[0] === Game.lastSymbol &&
+      Game.board[4] === Game.lastSymbol &&
+      Game.board[8] === Game.lastSymbol) ||
+    (Game.board[2] === Game.lastSymbol &&
+      Game.board[4] === Game.lastSymbol &&
+      Game.board[6] === Game.lastSymbol)
+  ) {
+    return endGame(true);
+  } else {
+    return endGame(false);
+  }
+}
+
+function endGame(condition) {
+  if (condition == true) {
+    alert(`${Game.lastSymbol} Won the game!`);
+    start();
+  } else {
+    return;
+  }
+}
+
+function start() {
   boardDom.innerHTML = "";
   for (let i = 0; i < Game.board.length; i++) {
-    (function innerRender() {
+    (function render() {
       let square = document.createElement("button");
       square.addEventListener("click", () => {
         addMark(i);
-        render();
+        start();
       });
       square.innerHTML = Game.board[i];
       square.classList.add("square");
@@ -24,11 +68,25 @@ function render() {
 }
 
 function addMark(index) {
-  if (Game.turn == true) {
-    Game.board[index] = "X";
+  if (Game.turn == true && Game.board[index] == "") {
+    Game.board[index] = Game.symbol;
+    Game.symbol = "O";
+    Game.lastSymbol = "X";
     Game.turn = false;
-  } else {
-    Game.board[index] = "O";
+    winningCondition();
+  } else if (Game.turn == false && Game.board[index] == "") {
+    Game.board[index] = Game.symbol;
+    Game.symbol = "X";
+    Game.lastSymbol = "O";
     Game.turn = true;
+    winningCondition();
+  } else {
+    return;
   }
+}
+function cleanObj() {
+  Game.board = ["", "", "", "", "", "", "", "", ""];
+  Game.symbol = "X";
+  Game.lastSymbol = "";
+  Game.turn = true;
 }
